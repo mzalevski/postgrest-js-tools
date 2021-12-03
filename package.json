@@ -1,6 +1,5 @@
 {
   "name": "postgrest-js-tools",
-  "version": "0.1.0",
   "description": "Tiny tools library for @supabase/postgrest-js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
