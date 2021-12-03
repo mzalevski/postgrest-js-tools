@@ -1,4 +1,4 @@
-import { getShape, getFields } from ".";
+import { getShape, getFields } from "./src";
 
 type CheckBase = { id: string; place_id: string; user_id: string };
 type PlaceBase = { id: string; title: string };

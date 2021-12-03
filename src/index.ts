@@ -1,3 +1,22 @@
+type MakePropTypesBoolean<T, A = T> = T extends object
+  ? { [K in keyof T]: MakePropTypesBoolean<Partial<T[K]>, T> } & {
+      /** which field to join by */
+      _: keyof A;
+    }
+  : boolean;
+
+type ParseReturnType<T, U> = U extends object
+  ? Omit<{ [K in keyof U]: ParseReturnType<T[Extract<K, keyof T>], U[K]> }, "_">
+  : T;
+
+export const getShape =
+  <T>() =>
+  <U extends Partial<MakePropTypesBoolean<T>>>(
+    fields: U
+  ): ParseReturnType<T, U> => {
+    return fields as any;
+  };
+
 export const getFields = (shape: Record<string, any>) => {
   const joins: Record<string, string> = {};
 
@@ -32,22 +51,3 @@ export const getFields = (shape: Record<string, any>) => {
 
   return fields;
 };
-
-type MakePropTypesBoolean<T, A = T> = T extends object
-  ? { [K in keyof T]: MakePropTypesBoolean<Partial<T[K]>, T> } & {
-      /** which field to join by */
-      _: keyof A;
-    }
-  : boolean;
-
-type ParseReturnType<T, U> = U extends object
-  ? Omit<{ [K in keyof U]: ParseReturnType<T[Extract<K, keyof T>], U[K]> }, "_">
-  : T;
-
-export const getShape =
-  <T>() =>
-  <U extends Partial<MakePropTypesBoolean<T>>>(
-    fields: U
-  ): ParseReturnType<T, U> => {
-    return fields as any;
-  };
