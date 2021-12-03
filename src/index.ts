@@ -5,8 +5,20 @@ type MakePropTypesBoolean<T, A = T> = T extends object
     }
   : boolean;
 
+type OmitFalseKeys<T> = {
+  [K in keyof T as T[K] extends false ? never : K]: T[K];
+};
+
 type ParseReturnType<T, U> = U extends object
-  ? Omit<{ [K in keyof U]: ParseReturnType<T[Extract<K, keyof T>], U[K]> }, "_">
+  ? Omit<
+      {
+        [K in keyof OmitFalseKeys<U>]: ParseReturnType<
+          T[Extract<K, keyof T>],
+          U[K]
+        >;
+      },
+      "_"
+    >
   : T;
 
 export const getShape =
