@@ -1,7 +1,7 @@
 # `postgrest-js-tools`
 
 [![Package](https://img.shields.io/npm/v/postgrest-js-tools)](https://www.npmjs.com/package/postgrest-js-tools)
-[![NPM](https://img.shields.io/npm/l/postgrest-js-tools)](https://opensource.org/licenses/ISC)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
 Tiny tools library for `@supabase/postgrest-js`.
 
