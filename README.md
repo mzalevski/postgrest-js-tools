@@ -31,31 +31,33 @@ import { getShape, getFields } from "postgrest-js-tools";
 type User = {
   id: string;
   email: string;
-  unused: string; // field we don't want
+  unused: string; // field we don't want to select
 };
 
 // or definitions["posts"]
 type Post = {
   id: string;
+  title: string;
   user_id: string;
-  unused: string; // field we don't want
   user: User;
+  unused: string; // field we don't want to select
 };
 
 // with intellisense!
 const shape = getShape<Post>()({
   id: true,
+  title: false, // if value === false then we skip the key
   user: { _: "user_id", id: true, email: true },
 });
 
-// typeof shape => { id:string; user: { id: string; email: string; } }
+// typeof shape => { id: string; user: { id: string; email: string; } }
 // getFields(shape) => "id,user:user_id(id,email)"
 
 const result = await supabase
   .from<typeof shape>("posts")
   .select(getFields(shape));
 
-// typeof result => PostgrestResponse<{ id:string; user: { id: string; email: string; }>
+// typeof result => PostgrestResponse<{ id: string; user: { id: string; email: string; }>
 ```
 
 ### Methods
