@@ -9,12 +9,12 @@ type OmitFalseKeys<T> = {
   [K in keyof T as T[K] extends false ? never : K]: T[K];
 };
 
-type ParseReturnType<T, U> = U extends object
+type ParseReturnType<T, U> = U extends Record<string, unknown>
   ? Omit<
       {
         [K in keyof OmitFalseKeys<U>]: ParseReturnType<
           T[Extract<K, keyof T>],
-          U[K]
+          U[K extends string ? K : never]
         >;
       },
       "_"
