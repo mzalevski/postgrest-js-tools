@@ -21,6 +21,17 @@ type ParseReturnType<T, U> = U extends object
     >
   : T;
 
+/**
+ * @example
+ * const shape = getShape<Post>()({
+ *   id: true,
+ *   title: false, // if value === false then we skip the key
+ *   user: { _: "user_id", id: true, email: true },
+ * });
+ *
+ * typeof shape => { id: string; user: { id: string; email: string; } }
+ * getFields(shape) => "id,user:user_id(id,email)"
+ */
 export const getShape =
   <T>() =>
   <U extends Partial<MakePropTypesBoolean<T>>>(
@@ -29,6 +40,17 @@ export const getShape =
     return fields as any;
   };
 
+/**
+ * @example
+ * const shape = getShape<Post>()({
+ *   id: true,
+ *   title: false, // if value === false then we skip the key
+ *   user: { _: "user_id", id: true, email: true },
+ * });
+ *
+ * typeof shape => { id: string; user: { id: string; email: string; } }
+ * getFields(shape) => "id,user:user_id(id,email)"
+ */
 export const getFields = (shape: Record<string, any>) => {
   const joins: Record<string, string> = {};
 
