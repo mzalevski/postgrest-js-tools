@@ -1,4 +1,5 @@
 import { getShape, getFields } from "./src";
+import { expectType } from "tsd";
 
 type CheckBase = { id: string; place_id: string; user_id: string };
 type PlaceBase = { id: string; title: string };
@@ -16,6 +17,10 @@ test("some fields, no relations & no omissions", () => {
     id: true,
   });
 
+  expectType<{
+    id: string;
+  }>(shape);
+
   const fields = getFields(shape);
 
   expect(fields).toBe("id");
@@ -27,6 +32,12 @@ test("some fields, relations & no omissions", () => {
     place: { _: "place_id", id: true },
     user: { _: "user_id", id: true },
   });
+
+  expectType<{
+    id: string;
+    place: { id: string };
+    user: { id: string };
+  }>(shape);
 
   const fields = getFields(shape);
 
@@ -40,6 +51,12 @@ test("many fields, relations & no omissions", () => {
     user: { _: "user_id", id: true, name: true },
   });
 
+  expectType<{
+    id: string;
+    place: { id: string; title: string };
+    user: { id: string; name: string };
+  }>(shape);
+
   const fields = getFields(shape);
 
   expect(fields).toBe("id,place:place_id(id,title),user:user_id(id,name)");
@@ -52,6 +69,12 @@ test("many fields, relations & some omissions", () => {
     user: { _: "user_id", id: true, name: false },
   });
 
+  expectType<{
+    id: string;
+    place: { id: string; title: string };
+    user: { id: string };
+  }>(shape);
+
   const fields = getFields(shape);
 
   expect(fields).toBe("id,place:place_id(id,title),user:user_id(id)");
@@ -63,6 +86,11 @@ test("many fields, relations & many omissions", () => {
     place: { _: "place_id", id: false, title: true },
     user: { _: "user_id", id: true, name: false },
   });
+
+  expectType<{
+    place: { title: string };
+    user: { id: string };
+  }>(shape);
 
   const fields = getFields(shape);
 
