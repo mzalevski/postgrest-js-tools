@@ -13,19 +13,43 @@ Tiny tools library for `@supabase/postgrest-js`.
 
 ### Quick start
 
-Install
+Installation
 
 ```bash
 npm i postgrest-js-tools
 ```
 
+```bash
+yarn add postgrest-js-tools
+```
+
+```bash
+pnpm i postgrest-js-tools
+```
+
+Imports
+
+Node
+
+```ts
+import { getShape, getFields } from "postgrest-js-tools";
+```
+
+Deno
+
+```ts
+import {
+  getShape,
+  getFields,
+} from "https://cdn.skypack.dev/postgrest-js-tools?dts";
+```
+
 Usage
 
-[click here to read how to generate database types -> `definitions`](https://supabase.com/docs/reference/javascript/generating-types#generate-database-types-from-openapi-specification)
+Click [here](https://supabase.com/docs/reference/javascript/generating-types#generate-database-types-from-openapi-specification) to read about how to generate database types. These are the `definitions` from the example below.
 
 ```ts
 // import { definitions } from "path/to/types";
-import { getShape, getFields } from "postgrest-js-tools";
 
 // or definitions["users"]
 type User = {
@@ -59,9 +83,3 @@ const result = await supabase
 
 // typeof result => PostgrestResponse<{ id: string; user: { id: string; email: string; }>
 ```
-
-### Methods
-
-`getShape: <T>() => <U extends Partial<MakePropTypesBoolean<T, T>>>(fields: U) => ParseReturnType<T, U>`
-
-`getFields: (shape: Record<string, any>) => string`
