@@ -96,3 +96,73 @@ test("many fields, relations & many omissions", () => {
 
   expect(fields).toBe("place:place_id(title),user:user_id(id)");
 });
+
+test("all fields & no relations", () => {
+  const shape = getShape<CheckBase>()({
+    "*": true,
+  });
+
+  expectType<{
+    id: string;
+    place_id: string;
+    user_id: string;
+  }>(shape);
+
+  const fields = getFields(shape);
+
+  expect(fields).toBe("*");
+});
+
+test("all fields & relations", () => {
+  const shape = getShape<Check>()({
+    "*": true,
+    place: { _: "place_id", "*": true },
+    user: { _: "user_id", "*": true },
+  });
+
+  expectType<{
+    id: string;
+    place: { id: string; title: string };
+    user: { id: string; name: string };
+  }>(shape);
+
+  const fields = getFields(shape);
+
+  expect(fields).toBe("*,place:place_id(*),user:user_id(*)");
+});
+
+test("all fields, relations & no omissions", () => {
+  const shape = getShape<Check>()({
+    id: true,
+    place: { _: "place_id", "*": true },
+    user: { _: "user_id", "*": true },
+  });
+
+  expectType<{
+    id: string;
+    place: { id: string; title: string };
+    user: { id: string; name: string };
+  }>(shape);
+
+  const fields = getFields(shape);
+
+  expect(fields).toBe("id,place:place_id(*),user:user_id(*)");
+});
+
+test("all fields, relations & omissions", () => {
+  const shape = getShape<Check>()({
+    id: true,
+    place: { _: "place_id", id: true, title: false },
+    user: { _: "user_id", "*": true },
+  });
+
+  expectType<{
+    id: string;
+    place: { id: string };
+    user: { id: string; name: string };
+  }>(shape);
+
+  const fields = getFields(shape);
+
+  expect(fields).toBe("id,place:place_id(id),user:user_id(*)");
+});

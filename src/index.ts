@@ -2,6 +2,8 @@ type MakePropTypesBoolean<T, A = T> = T extends object
   ? { [K in keyof T]: MakePropTypesBoolean<Partial<T[K]>, T> } & {
       /** which field to join by */
       _: keyof A;
+      /** wheter to get all the fields */
+      "*"?: true;
     }
   : boolean;
 
@@ -9,7 +11,9 @@ type OmitFalseKeys<T> = {
   [K in keyof T as T[K] extends false ? never : K]: T[K];
 };
 
-type ParseReturnType<T, U> = U extends Record<string, unknown>
+export type ParseReturnType<T, U> = U extends { "*": true }
+  ? T
+  : U extends Record<string, unknown>
   ? Omit<
       {
         [K in keyof OmitFalseKeys<U>]: ParseReturnType<

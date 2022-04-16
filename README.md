@@ -58,7 +58,7 @@ type User = {
   unused: string; // field we don't want to select
 };
 
-// or definitions["posts"]
+// or definitions["posts"] & { user: definitions["users"] }
 type Post = {
   id: string;
   title: string;
@@ -72,6 +72,7 @@ const shape = getShape<Post>()({
   id: true,
   title: false, // if value === false then we skip the key
   user: { _: "user_id", id: true, email: true },
+  // user: { _: "user_id", "*": true }, // "*": true gets all the fields
 });
 
 // typeof shape => { id: string; user: { id: string; email: string; } }
