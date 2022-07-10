@@ -166,3 +166,17 @@ test("all fields, relations & omissions", () => {
 
   expect(fields).toBe("id,place:place_id(id),user:user_id(*)");
 });
+
+test("foreign fields & relations", () => {
+  const shape = getShape<Check>()({
+    id: true,
+    place_id: true,
+    user_id: true,
+    place: { _: "place_id", id: true, title: true },
+    user: { _: "user_id", id: true, name: true },
+  });
+
+  const fields = getFields(shape);
+
+  expect(fields).toBe("id,place_id,user_id,place:place_id(id,title),user:user_id(id,name)");
+});
