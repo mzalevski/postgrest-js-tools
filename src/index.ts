@@ -77,15 +77,29 @@ export const getFields = (shape: Record<string, any>) => {
     return undefined;
   })
     .replace(/[": \n]/g, "")
-    .replace(/\{/g, "(")
-    .replace(/\}/g, ")")
+    // .replace(/\{/g, "(")
+    // .replace(/\}/g, ")")
     .slice(1, -1)}`;
 
-  if (Object.keys(joins).length > 0)
-    return fields.replace(
-      new RegExp(Object.keys(joins).join("|"), "g"),
-      (m) => `${m}:${joins[m]}`
-    );
+  if (Object.keys(joins).length > 0) {
 
+    let joinsModifiedKeys: Record<string, string> = {}
+
+    // Added `{` at the end of every key
+    Object.entries(joins)
+      .forEach(([k, v]) => {
+        joinsModifiedKeys[`${k}{`] = v;
+      });
+
+    return fields.replace(
+      new RegExp(Object.keys(joinsModifiedKeys).join("|"), "g"),
+      (m) => {
+        let trimKey = m.slice(0, -1); // removed the last `{`
+        return `${trimKey}:${joinsModifiedKeys[m]}(`; // appended the `(`
+      }
+    )
+      .replace(/\{/g, '(')
+      .replace(/\}/g, ')');
+  }
   return fields;
 };
