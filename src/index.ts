@@ -81,10 +81,16 @@ export const getFields = (shape: Record<string, any>) => {
     .replace(/\}/g, ")")
     .slice(1, -1)}`;
 
-  if (Object.keys(joins).length > 0) 
+  if (Object.keys(joins).length > 0)
     return fields.replace(
-      new RegExp(Object.keys(joins).map((j) => `${j}(?=\\()`).join("|"), "g"),
-      (m) =>  `${m}:${joins[m]}`
+      new RegExp(
+        Object.keys(joins)
+          .map((j) => `${j}(?=\\()`)
+          .join("|"),
+        "g"
+      ),
+      (m) => `${m}:${joins[m]}`
     );
+
   return fields;
 };

@@ -177,14 +177,16 @@ test("foreign fields & relations", () => {
   });
 
   expectType<{
-    id: string,
-    place_id: string,
-    user_id: string,
+    id: string;
+    place_id: string;
+    user_id: string;
     place: { id: string; title: string };
     user: { id: string; name: string };
   }>(shape);
 
   const fields = getFields(shape);
 
-  expect(fields).toBe("id,place_id,user_id,place:place_id(id,title),user:user_id(id,name)");
+  expect(fields).toBe(
+    "id,place_id,user_id,place:place_id(id,title),user:user_id(id,name)"
+  );
 });
