@@ -7,6 +7,7 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "husky install",
     "test": "jest --watchAll=true",
     "build": "tsc"
   },
@@ -26,8 +27,13 @@
   "author": "mzalevski",
   "license": "ISC",
   "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
     "@types/jest": "^28.1.4",
+    "husky": "^8.0.1",
     "jest": "^28.1.2",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
     "ts-jest": "^28.0.5",
     "tsd": "^0.22.0",
     "typescript": "^4.7.4"
@@ -35,5 +41,10 @@
   "bugs": {
     "url": "https://github.com/mzalevski/postgrest-js-tools/issues"
   },
-  "homepage": "https://github.com/mzalevski/postgrest-js-tools#readme"
+  "homepage": "https://github.com/mzalevski/postgrest-js-tools#readme",
+  "lint-staged": {
+    "*.{js,ts}": [
+      "yarn prettier --write"
+    ]
+  }
 }
