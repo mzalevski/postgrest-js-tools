@@ -85,7 +85,7 @@ export const getFields = (shape: Record<string, any>) => {
     return fields.replace(
       new RegExp(
         Object.keys(joins)
-          .map((j) => `${j}(?=\\()`)
+          .map((joinKey) => `${joinKey}(?=\\()`)
           .join("|"),
         "g"
       ),
