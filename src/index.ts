@@ -1,7 +1,7 @@
 type MakePropTypesBoolean<T, A = T> = T extends object
   ? { [K in keyof T]: MakePropTypesBoolean<Partial<T[K]>, T> } & {
       /** which field to join by */
-      _: keyof A;
+      _?: keyof A;
       /** wheter to get all the fields */
       "*"?: true;
     }
@@ -13,6 +13,8 @@ type OmitFalseKeys<T> = {
 
 export type ParseReturnType<T, U> = U extends { "*": true }
   ? T
+  : U extends Array<infer UE>
+  ? ParseReturnType<T extends Array<infer TE> ? TE : T, UE>[]
   : U extends Record<string, unknown>
   ? Omit<
       {
@@ -76,7 +78,7 @@ export const getFields = (shape: Record<string, any>) => {
 
     return undefined;
   })
-    .replace(/[": \n]/g, "")
+    .replace(/[(": \n)(\[)(\])]/g, "")
     .replace(/\{/g, "(")
     .replace(/\}/g, ")")
     .slice(1, -1)}`;

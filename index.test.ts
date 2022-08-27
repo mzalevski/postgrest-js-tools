@@ -12,6 +12,11 @@ type Check = CheckBase & {
   place: PlaceBase;
 };
 
+type Place = PlaceBase & {
+  /** checks relation */
+  checks: Check[];
+};
+
 test("some fields, no relations & no omissions", () => {
   const shape = getShape<Check>()({
     id: true,
@@ -189,4 +194,20 @@ test("foreign fields & relations", () => {
   expect(fields).toBe(
     "id,place_id,user_id,place:place_id(id,title),user:user_id(id,name)"
   );
+});
+
+test("1:m and n:m relations", () => {
+  const shape = getShape<Place>()({
+    id: true,
+    checks: [{ id: true }],
+  });
+
+  expectType<{
+    id: string;
+    checks: { id: string }[];
+  }>(shape);
+
+  const fields = getFields(shape);
+
+  expect(fields).toBe("id,checks(id)");
 });
