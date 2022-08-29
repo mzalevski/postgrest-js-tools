@@ -3,13 +3,30 @@
 [![Package](https://img.shields.io/npm/v/postgrest-js-tools)](https://www.npmjs.com/package/postgrest-js-tools)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
-Tiny tools library for `@supabase/postgrest-js`.
+Tiny tools library for [@supabase/supabase-js](https://github.com/supabase/supabase-js).
+
+### TLDR
+
+```ts
+type User = { id: string; email: string };
+const shape = getShape<User>()({ id: true }); // with intellisense!
+
+// typeof shape => { id: string; }
+// getFields(shape) => "id"
+
+const result = await supabase
+  .from<typeof shape>("users")
+  .select(getFields(shape));
+
+// typeof result => PostgrestResponse<{ id: string; }>
+```
 
 ### Features:
 
 1. intellisense while selecting fields (`getShape`)
 2. auto generated select string (`getFields`)
 3. return type based on the selected fields (`typeof shape`)
+4. 1:1, 1:m & n:m relations support
 
 ### Quick start
 
@@ -48,39 +65,45 @@ Usage
 
 Click [here](https://supabase.com/docs/reference/javascript/generating-types#generate-database-types-from-openapi-specification) to read about how to generate database types. These are the `definitions` from the example below.
 
-```ts
-// import { definitions } from "path/to/types";
+Let's assume we work on a following data structure:
 
-// or definitions["users"]
-type User = {
-  id: string;
-  email: string;
-  unused: string; // field we don't want to select
+- Each **University** has many **Scholars**
+- Each **Scholar** has many **Papers**
+
+```ts
+import { definitions } from "path/to/types";
+
+type UniversityBase = definitions["universities"]; // { id: string; name: string }
+type ScholarBase = definitions["scholars"]; // { id: string; email: string; university_id: string }
+type PaperBase = definitions["papers"]; // { id: string; title: string; scholar_id: string }
+
+type University = UniversityBase & {
+  scholars: Scholar[];
 };
 
-// or definitions["posts"] & { user: definitions["users"] }
-type Post = {
-  id: string;
-  title: string;
-  user_id: string;
-  user: User;
-  unused: string; // field we don't want to select
+type Scholar = ScholarBase & {
+  university: University;
+  papers: Paper[];
+};
+
+type Paper = PaperBase & {
+  scholar: Scholar;
 };
 
 // with intellisense!
-const shape = getShape<Post>()({
+const shape = getShape<Scholar>()({
   id: true,
-  title: false, // if value === false then we skip the key
-  user: { _: "user_id", id: true, email: true },
-  // user: { _: "user_id", "*": true }, // "*": true gets all the fields
+  email: false, // if value === false then we skip the key
+  university: { _: "university_id", name: true }, // _ is the key to join by
+  papers: [{ "*": true }], // * selects all the fields
 });
 
-// typeof shape => { id: string; user: { id: string; email: string; } }
-// getFields(shape) => "id,user:user_id(id,email)"
+// typeof shape => { id: string; university: { name: string }; papers: { id: string; title: string; scholar_id: string }[] }
+// getFields(shape) => "id,university:university_id(id,name),papers(id,title,scholar_id)"
 
 const result = await supabase
-  .from<typeof shape>("posts")
+  .from<typeof shape>("scholars")
   .select(getFields(shape));
 
-// typeof result => PostgrestResponse<{ id: string; user: { id: string; email: string; }>
+// typeof result => PostgrestResponse<{ id: string; university: { id: string; name: string }; papers: { id: string, title: string; scholar_id: string }[] }>
 ```
