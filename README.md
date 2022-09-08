@@ -99,11 +99,11 @@ const shape = getShape<Scholar>()({
 });
 
 // typeof shape => { id: string; university: { name: string }; papers: { id: string; title: string; scholar_id: string }[] }
-// getFields(shape) => "id,university:university_id(id,name),papers(id,title,scholar_id)"
+// getFields(shape) => "id,university:university_id(name),papers(*)"
 
 const result = await supabase
   .from<typeof shape>("scholars")
   .select(getFields(shape));
 
-// typeof result => PostgrestResponse<{ id: string; university: { id: string; name: string }; papers: { id: string, title: string; scholar_id: string }[] }>
+// typeof result => PostgrestResponse<{ id: string; university: { name: string }; papers: { id: string, title: string; scholar_id: string }[] }>
 ```
